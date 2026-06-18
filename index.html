@@ -527,11 +527,11 @@ function renderDetail(num){
         <h2>${o.title}</h2>
         ${o.price?`<div class="price">${o.price} USD</div>`:""}
         <dl class="spec">
-          <div class="spec-row"><dt>Dimensions</dt><dd>${o.dims||""}</dd></div>
-          <div class="spec-row"><dt>Material</dt><dd>${o.material||""}</dd></div>
-          <div class="spec-row"><dt>Glaze</dt><dd>${o.glaze||""}</dd></div>
-          <div class="spec-row"><dt>Year</dt><dd>${o.year||""}</dd></div>
-          <div class="spec-row"><dt>Edition</dt><dd>${o.edition||""}</dd></div>
+          ${o.dims?`<div class="spec-row"><dt>Dimensions</dt><dd>${o.dims}</dd></div>`:""}
+          ${o.material?`<div class="spec-row"><dt>Material</dt><dd>${o.material}</dd></div>`:""}
+          ${o.glaze?`<div class="spec-row"><dt>Glaze</dt><dd>${o.glaze}</dd></div>`:""}
+          ${o.year?`<div class="spec-row"><dt>Year</dt><dd>${o.year}</dd></div>`:""}
+          ${o.edition?`<div class="spec-row"><dt>Edition</dt><dd>${o.edition}</dd></div>`:""}
         </dl>
         <p class="blurb">${o.blurb||""}</p>
         <div class="detail-actions">
