@@ -474,9 +474,9 @@ const count=document.getElementById("rail-count");
 function updateCount(){
   const pieces=[...rail.querySelectorAll(".piece")];
   if(!pieces.length)return;
-  const left=rail.scrollLeft+parseFloat(getComputedStyle(rail).paddingLeft);
+  const railLeft=rail.getBoundingClientRect().left+parseFloat(getComputedStyle(rail).paddingLeft);
   let idx=0,best=1e9;
-  pieces.forEach((p,i)=>{const d=Math.abs(p.offsetLeft-left);if(d<best){best=d;idx=i}});
+  pieces.forEach((p,i)=>{const d=Math.abs(p.getBoundingClientRect().left-railLeft);if(d<best){best=d;idx=i}});
   count.textContent=`${String(idx+1).padStart(2,"0")} / ${String(OBJECTS.length).padStart(2,"0")}`;
 }
 rail.addEventListener("scroll",()=>requestAnimationFrame(updateCount),{passive:true});
