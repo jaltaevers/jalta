@@ -107,15 +107,22 @@ body[data-view="home"] .wordmark{opacity:0;pointer-events:none}
   font-weight:400;
 }
 
-/* ── work: scattered grid ── */
-#view-work{overflow-y:auto;overscroll-behavior:contain}
-.scatter{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  column-gap:calc(var(--pad)*2.5);
-  padding:calc(var(--pad)*3) calc(var(--pad)*3) calc(var(--pad)*6);
+/* ── work: horizontal rail ── */
+#view-work{display:flex;flex-direction:column;justify-content:center}
+.rail{
+  display:flex;gap:var(--gap);
+  overflow-x:auto;overflow-y:hidden;
+  padding:0 var(--pad) calc((100vh - var(--card-h)) / 2) max(var(--pad), 15vw);
+  scroll-padding-left:max(var(--pad), 15vw);
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  align-items:flex-end;
+  height:100%;
+  cursor:grab;
 }
-.piece{min-width:0}
+.rail.dragging{cursor:grabbing;scroll-snap-type:none}
+.rail::-webkit-scrollbar{display:none}
+.piece{flex:0 0 auto;scroll-snap-align:start;width:calc(var(--card-h) * 0.5)}
 .piece a{display:block}
 .piece .frame{width:100%;aspect-ratio:3/4;overflow:hidden;background:var(--paper-deep)}
 .piece .frame svg,.piece .frame img{
@@ -127,7 +134,8 @@ body[data-view="home"] .wordmark{opacity:0;pointer-events:none}
 .caption{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:13px;letter-spacing:.05em}
 .caption .num{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
 .caption .ttl{color:var(--ink-soft);font-weight:300}
-.scatter-count{position:fixed;bottom:calc(var(--pad)*.8);left:var(--pad);font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;z-index:5}
+.rail-count{position:fixed;bottom:calc(var(--pad)*.8);left:var(--pad);font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;z-index:5}
+.rail-hint{position:fixed;bottom:calc(var(--pad)*.8);right:var(--pad);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-soft);z-index:5}
 
 /* ── object detail ── */
 #view-object{overflow-y:auto;overscroll-behavior:contain}
@@ -231,7 +239,7 @@ body[data-view="object"] .back{display:block}
   .detail-info .stick{position:static}
   .detail-info h2{margin-bottom:18px}
   .about-overlay{align-items:flex-end;justify-content:center}
-  .scatter{grid-template-columns:repeat(2,1fr)}
+  .rail-hint{display:none}
   .hero-name .logo{width:max(60vw, var(--logo-w))}
 }
 </style>
@@ -268,8 +276,9 @@ body[data-view="object"] .back{display:block}
 </section>
 
 <section class="view" id="view-work" aria-label="Work">
-  <div class="scatter" id="rail"></div>
-  <div class="scatter-count" id="rail-count"></div>
+  <div class="rail" id="rail" tabindex="0"></div>
+  <div class="rail-count" id="rail-count"></div>
+  <div class="rail-hint">Scroll &rarr;</div>
 </section>
 
 <section class="view" id="view-object" aria-label="Object detail">
@@ -452,26 +461,52 @@ function mediaFor(o, variant){
 /* ─── landing: click anywhere to enter ─── */
 document.getElementById("view-home").addEventListener("click",()=>go("#/work"));
 
-/* ─── work scatter ─── */
+/* ─── work rail ─── */
 const rail=document.getElementById("rail");
-const visibleObjects=OBJECTS.filter(o=>o.images&&o.images.length);
-function scatterSeed(n){const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);}
-rail.innerHTML=visibleObjects.map((o,i)=>{
-  const mt=Math.round(scatterSeed(i)*160);
-  return`<article class="piece" style="padding-top:${mt}px">
+rail.innerHTML=OBJECTS.map((o,i)=>`
+  <article class="piece">
     <a href="#/object/${o.num}" data-obj="${o.num}" aria-label="Object ${o.num} — ${o.title}">
       <div class="frame">${mediaFor(o,0)}</div>
       <div class="caption"><span class="num">Object ${o.num}</span><span class="ttl">${o.title}</span></div>
     </a>
-  </article>`;}).join("");
+  </article>`).join("");
 
 const count=document.getElementById("rail-count");
-count.textContent=`${String(visibleObjects.length).padStart(2,"0")} objects`;
+function updateCount(){
+  const pieces=[...rail.querySelectorAll(".piece")];
+  if(!pieces.length)return;
+  const railLeft=rail.getBoundingClientRect().left+parseFloat(getComputedStyle(rail).paddingLeft);
+  let idx=0,best=1e9;
+  pieces.forEach((p,i)=>{const d=Math.abs(p.getBoundingClientRect().left-railLeft);if(d<best){best=d;idx=i}});
+  count.textContent=`${String(idx+1).padStart(2,"0")} / ${String(OBJECTS.length).padStart(2,"0")}`;
+}
+rail.addEventListener("scroll",()=>requestAnimationFrame(updateCount),{passive:true});
+updateCount();
 
+rail.addEventListener("wheel",e=>{
+  if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){rail.scrollLeft+=e.deltaY;e.preventDefault()}
+},{passive:false});
+
+let drag=null,didDrag=false;
+rail.addEventListener("pointerdown",e=>{
+  if(e.pointerType!=="mouse")return;
+  drag={x:e.clientX,sl:rail.scrollLeft};didDrag=false;
+});
+window.addEventListener("pointermove",e=>{
+  if(!drag)return;
+  const dx=e.clientX-drag.x;
+  if(!didDrag && Math.abs(dx)<8)return;
+  didDrag=true;
+  rail.classList.add("dragging");
+  rail.scrollLeft=drag.sl-dx;
+});
+window.addEventListener("pointerup",()=>{rail.classList.remove("dragging");drag=null});
+rail.addEventListener("dragstart",e=>e.preventDefault());
 rail.addEventListener("click",e=>{
   const a=e.target.closest("a[data-obj]");
   if(!a)return;
   e.preventDefault();
+  if(didDrag){didDrag=false;return}
   go(a.getAttribute("href"));
 },true);
 
