@@ -572,7 +572,7 @@ function renderPage(i){
     let val;
     if(r.link&&r.link.startsWith("mailto:")){
       const email=r.link.replace("mailto:","").split("?")[0];
-      val=`<button class="copy-email" data-email="${email}" onclick="(function(b){navigator.clipboard.writeText(b.dataset.email).then(()=>{b.classList.add('copied');b.querySelector('.cv').textContent='copied';setTimeout(()=>{b.classList.remove('copied');b.querySelector('.cv').textContent=b.dataset.email},2000)})})(this)"><span class="cv">${email}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="7" height="8" rx="1"/><path d="M4 3V2a1 1 0 011-1h5a1 1 0 011 1v7a1 1 0 01-1 1h-1"/></svg></button>`;
+      val=`<button class="copy-email" data-email="${email}" onclick="(function(b){navigator.clipboard.writeText(b.dataset.email).then(()=>{b.classList.add('copied');b.querySelector('.cv').textContent='copied';setTimeout(()=>{b.classList.remove('copied');b.querySelector('.cv').textContent=r.v},2000)})})(this)"><span class="cv">${r.v}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="7" height="8" rx="1"/><path d="M4 3V2a1 1 0 011-1h5a1 1 0 011 1v7a1 1 0 01-1 1h-1"/></svg></button>`;
     }else if(r.link){
       val=`<a href="${r.link}" ${r.link.startsWith("http")?'target="_blank" rel="noopener"':''}>${r.v}</a>`;
     }else{val=r.v;}
