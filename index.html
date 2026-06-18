@@ -112,16 +112,16 @@ body[data-view="home"] .wordmark{opacity:0;pointer-events:none}
 .rail{
   display:flex;gap:var(--gap);
   overflow-x:auto;overflow-y:hidden;
-  padding:0 max(var(--pad), calc(50vw - (var(--card-h)*0.75)/2));
+  padding:0 var(--pad) calc((100vh - var(--card-h)) / 2) max(var(--pad), 15vw);
   scroll-snap-type:x mandatory;
   scrollbar-width:none;
-  align-items:center;
+  align-items:flex-end;
   height:100%;
   cursor:grab;
 }
 .rail.dragging{cursor:grabbing;scroll-snap-type:none}
 .rail::-webkit-scrollbar{display:none}
-.piece{flex:0 0 auto;scroll-snap-align:center;width:calc(var(--card-h) * 0.75)}
+.piece{flex:0 0 auto;scroll-snap-align:start;width:calc(var(--card-h) * 0.5)}
 .piece a{display:block}
 .piece .frame{width:100%;aspect-ratio:3/4;overflow:hidden;background:var(--paper-deep)}
 .piece .frame svg,.piece .frame img{
@@ -474,9 +474,9 @@ const count=document.getElementById("rail-count");
 function updateCount(){
   const pieces=[...rail.querySelectorAll(".piece")];
   if(!pieces.length)return;
-  const mid=rail.scrollLeft+rail.clientWidth/2;
+  const railLeft=rail.getBoundingClientRect().left+parseFloat(getComputedStyle(rail).paddingLeft);
   let idx=0,best=1e9;
-  pieces.forEach((p,i)=>{const c=p.offsetLeft+p.offsetWidth/2;const d=Math.abs(c-mid);if(d<best){best=d;idx=i}});
+  pieces.forEach((p,i)=>{const d=Math.abs(p.getBoundingClientRect().left-railLeft);if(d<best){best=d;idx=i}});
   count.textContent=`${String(idx+1).padStart(2,"0")} / ${String(OBJECTS.length).padStart(2,"0")}`;
 }
 rail.addEventListener("scroll",()=>requestAnimationFrame(updateCount),{passive:true});
