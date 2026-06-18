@@ -228,6 +228,9 @@ body[data-view="object"] .back{display:block}
 .about-row .k{text-transform:uppercase;letter-spacing:.1em;font-size:11px;color:var(--ink-soft);white-space:nowrap;padding-top:3px}
 .about-row .v{text-align:right}
 .about-row .v a{border-bottom:1px solid var(--ink)}
+.copy-email{background:none;border:none;cursor:pointer;font:inherit;color:inherit;border-bottom:1px solid var(--ink);padding:0;display:inline-flex;align-items:baseline;gap:5px}
+.copy-email svg{width:11px;height:11px;opacity:.45;flex-shrink:0;position:relative;top:1px}
+.copy-email.copied{color:var(--ink-soft)}
 .about-bio{padding:18px 0 6px;border-bottom:1px solid rgba(22,22,22,.25)}
 .about-foot{margin-top:26px;font-size:11px;letter-spacing:.06em;color:var(--ink-soft)}
 
@@ -562,10 +565,16 @@ function renderPage(i){
   if(CFG.about.image){img.innerHTML=`<img src="${CFG.about.image}" alt="Jalta in the studio">`}
   else{img.innerHTML=objectSVG(OBJECTS[3]||OBJECTS[0]||{num:"000"},2,9)}
   document.getElementById("about-bio").textContent=CFG.about.bio||"";
-  document.getElementById("about-rows").innerHTML=(CFG.about.rows||[]).map(r=>
-    `<div class="about-row"><span class="k">${r.k}</span><span class="v">${
-      r.link?`<a href="${r.link}" ${r.link.startsWith("http")?'target="_blank" rel="noopener"':''}>${r.v}</a>`:r.v
-    }</span></div>`).join("");
+  document.getElementById("about-rows").innerHTML=(CFG.about.rows||[]).map(r=>{
+    let val;
+    if(r.link&&r.link.startsWith("mailto:")){
+      const email=r.link.replace("mailto:","").split("?")[0];
+      val=`<button class="copy-email" data-email="${email}" onclick="(function(b){navigator.clipboard.writeText(b.dataset.email).then(()=>{b.classList.add('copied');b.querySelector('.cv').textContent='copied';setTimeout(()=>{b.classList.remove('copied');b.querySelector('.cv').textContent=r.v},2000)})})(this)"><span class="cv">${r.v}</span><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="7" height="8" rx="1"/><path d="M4 3V2a1 1 0 011-1h5a1 1 0 011 1v7a1 1 0 01-1 1h-1"/></svg></button>`;
+    }else if(r.link){
+      val=`<a href="${r.link}" ${r.link.startsWith("http")?'target="_blank" rel="noopener"':''}>${r.v}</a>`;
+    }else{val=r.v;}
+    return`<div class="about-row"><span class="k">${r.k}</span><span class="v">${val}</span></div>`;
+  }).join("");
   document.getElementById("about-footer").textContent=CFG.about.footer||"";
 })();
 const about=document.getElementById("about");
