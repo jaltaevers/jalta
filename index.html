@@ -71,6 +71,9 @@ body[data-view="home"] .wordmark{opacity:0;pointer-events:none}
 }
 .nav button:hover::after,.nav button[aria-current="true"]::after{transform:scaleX(1)}
 .nav button:focus-visible{outline:1px solid var(--ink);outline-offset:4px}
+.nav-insta{display:flex;align-items:center;line-height:1}
+.nav-insta svg{width:var(--nav-size);height:var(--nav-size);display:block}
+.nav-insta:focus-visible{outline:1px solid var(--ink);outline-offset:4px}
 
 /* ───────────── views ───────────── */
 .view{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity .55s ease,visibility 0s linear .55s}
@@ -356,6 +359,8 @@ document.getElementById("subtitle").textContent = CFG.subtitle || "";
   let html=`<button id="nav-work" onclick="go('#/work')">Work</button>`;
   (CFG.pages||[]).forEach((p,i)=>{html+=`<button onclick="go('#/page/${i}')">${p.title}</button>`});
   html+=`<button id="nav-about" onclick="openAbout()">About</button>`;
+  const instaRow=(CFG.about&&CFG.about.rows&&CFG.about.rows.find(r=>r.link&&r.link.includes('instagram')))||{link:'https://www.instagram.com/jalta__/'};
+  html+=`<a class="nav-insta" href="${instaRow.link}" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor" stroke="none"/></svg></a>`;
   nav.innerHTML=html;
 })();
 
