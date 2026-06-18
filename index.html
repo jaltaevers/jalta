@@ -112,7 +112,7 @@ body[data-view="home"] .wordmark{opacity:0;pointer-events:none}
 .rail{
   display:flex;gap:var(--gap);
   overflow-x:auto;overflow-y:hidden;
-  padding:0 var(--pad) calc((100vh - var(--card-h)) / 2) var(--pad);
+  padding:0 var(--pad) calc((100vh - var(--card-h)) / 2) max(var(--pad), 15vw);
   scroll-snap-type:x mandatory;
   scrollbar-width:none;
   align-items:flex-end;
