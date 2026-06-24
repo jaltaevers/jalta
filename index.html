@@ -209,7 +209,7 @@ body[data-view="object"] .back{display:block}
 .about-overlay.open{opacity:1;visibility:visible;transition:opacity .4s ease}
 .about-card{
   position:relative;
-  width:min(440px,100%);max-height:calc(100vh - var(--pad)*2);overflow-y:auto;
+  width:min(440px,100%);max-height:calc(100vh - var(--pad)*2);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   background:var(--card);
   font-family:var(--font-mono);font-size:13px;line-height:1.7;
   padding:60px 28px 34px;
@@ -583,7 +583,7 @@ function renderPage(i){
   document.getElementById("about-footer").textContent=CFG.about.footer||"";
 })();
 const about=document.getElementById("about");
-function openAbout(){about.classList.add("open");const b=document.getElementById("nav-about");if(b)b.setAttribute("aria-current","true")}
+function openAbout(){about.classList.add("open");const ac=about.querySelector(".about-card");if(ac)ac.scrollTop=0;const b=document.getElementById("nav-about");if(b)b.setAttribute("aria-current","true")}
 function closeAbout(){about.classList.remove("open");const b=document.getElementById("nav-about");if(b)b.removeAttribute("aria-current")}
 window.addEventListener("keydown",e=>{if(e.key==="Escape")closeAbout()});
 
