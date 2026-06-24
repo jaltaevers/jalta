@@ -244,7 +244,8 @@ body[data-view="object"] .back{display:block}
   .detail-info{order:-1}
   .detail-info .stick{position:static}
   .detail-info h2{margin-bottom:18px}
-  .about-overlay{align-items:flex-end;justify-content:center}
+  .about-overlay{align-items:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-top:0}
+  .about-card{max-height:none;min-height:100%;overflow-y:visible;border-radius:0;width:100%;padding-top:80px}
   .rail-hint{display:none}
   .hero-name .logo{width:max(60vw, var(--logo-w))}
 }
@@ -583,7 +584,7 @@ function renderPage(i){
   document.getElementById("about-footer").textContent=CFG.about.footer||"";
 })();
 const about=document.getElementById("about");
-function openAbout(){about.classList.add("open");const ac=about.querySelector(".about-card");if(ac)ac.scrollTop=0;const b=document.getElementById("nav-about");if(b)b.setAttribute("aria-current","true")}
+function openAbout(){about.classList.add("open");about.scrollTop=0;}const b=document.getElementById("nav-about");if(b)b.setAttribute("aria-current","true")}
 function closeAbout(){about.classList.remove("open");const b=document.getElementById("nav-about");if(b)b.removeAttribute("aria-current")}
 window.addEventListener("keydown",e=>{if(e.key==="Escape")closeAbout()});
 
