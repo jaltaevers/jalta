@@ -584,7 +584,7 @@ function renderPage(i){
   document.getElementById("about-footer").textContent=CFG.about.footer||"";
 })();
 const about=document.getElementById("about");
-function openAbout(){about.classList.add("open");about.scrollTop=0;}const b=document.getElementById("nav-about");if(b)b.setAttribute("aria-current","true")}
+function openAbout(){about.classList.add("open");about.scrollTop=0;const b=document.getElementById("nav-about");if(b)b.setAttribute("aria-current","true")}
 function closeAbout(){about.classList.remove("open");const b=document.getElementById("nav-about");if(b)b.removeAttribute("aria-current")}
 window.addEventListener("keydown",e=>{if(e.key==="Escape")closeAbout()});
 
