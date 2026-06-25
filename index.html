@@ -7,6 +7,16 @@
 <meta name="theme-color" content="#FFFFFF">
 <title>JALTA — Objet d'Art</title>
 <meta name="description" content="JALTA — collectible ceramic objects. Tel Aviv.">
+
+<meta property="og:site_name" content="JALTA — Objet d'Art">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.jaltaevers.com">
+<meta property="og:title" content="JALTA — Objet d'Art">
+<meta property="og:description" content="JALTA — collectible ceramic objects. Tel Aviv.">
+<meta property="og:image" content="https://www.jaltaevers.com/img/hero-1.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://www.jaltaevers.com">
+<script type="application/ld+json" id="ld-json">{"@context":"https://schema.org","@type":"Organization","name":"JALTA","url":"https://www.jaltaevers.com","description":"Collectible ceramic objects. Tel Aviv.","sameAs":["https://www.instagram.com/jalta__/"]}</script>
 <link rel="preload" as="image" href="img/hero-1.jpg">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
@@ -589,6 +599,25 @@ function closeAbout(){about.classList.remove("open");const b=document.getElement
 window.addEventListener("keydown",e=>{if(e.key==="Escape")closeAbout()});
 
 /* ─── router ─── */
+
+function updateSEO(obj){
+  const base='https://www.jaltaevers.com';
+  const siteName='JALTA — Objet d\'Art';
+  let title=siteName,desc='Collectible ceramic objects. Tel Aviv.',img=base+'/img/hero-1.jpg',url=base+'/';
+  if(obj){
+    title='Object '+obj.num+(obj.title?' — '+obj.title:'')+' — JALTA';
+    desc=[obj.dims,obj.material,obj.glaze].filter(Boolean).join('. ')+(obj.blurb?' '+obj.blurb:'');
+    if(!desc)desc='Handmade ceramic object by JALTA.';
+    if(obj.images&&obj.images[0])img=base+'/'+obj.images[0];
+    url=base+'/#/object/'+obj.num;
+  }
+  document.title=title;
+  ['og:title','og:description','og:image','og:url'].forEach(p=>{const m=document.querySelector('meta[property="'+p+'"]');if(m)m.content={['og:title']:title,['og:description']:desc,['og:image']:img,['og:url']:url}[p];});
+  const dm=document.querySelector('meta[name="description"]');if(dm)dm.content=desc;
+  const cl=document.querySelector('link[rel="canonical"]');if(cl)cl.href=url;
+  const ld=document.getElementById('ld-json');
+  if(ld){ld.textContent=obj?JSON.stringify({'@context':'https://schema.org','@type':'Product','name':'Object '+obj.num+(obj.title?' — '+obj.title:''),'description':desc,'image':img,'brand':{'@type':'Brand','name':'JALTA'},'offers':obj.price&&obj.price.toUpperCase()!=='SOLD'?{'@type':'Offer','price':obj.price.replace(/[^0-9.]/g,''),'priceCurrency':'USD','availability':'https://schema.org/InStock'}:{'@type':'Offer','availability':'https://schema.org/SoldOut'}}):JSON.stringify({'@context':'https://schema.org','@type':'Organization','name':'JALTA','url':'https://www.jaltaevers.com','description':'Collectible ceramic objects. Tel Aviv.','sameAs':['https://www.instagram.com/jalta__/']});}
+}
 const views={home:"view-home",work:"view-work",object:"view-object",page:"view-page"};
 function go(h){
   if(location.hash===h){route()}
@@ -598,7 +627,7 @@ window.go=go;
 function route(){
   const h=location.hash||"#/";
   let v="home";
-  if(h.startsWith("#/object/")){v="object";renderDetail(h.split("/")[2])}
+  if(h.startsWith("#/object/")){v="object";const oNum=h.split("/")[2];renderDetail(oNum);updateSEO(OBJECTS.find(x=>x.num===oNum));}
   else if(h.startsWith("#/page/")){v="page";renderPage(parseInt(h.split("/")[2],10))}
   else if(h==="#/work"){v="work"}
   document.body.dataset.view=v;
@@ -606,6 +635,7 @@ function route(){
   const nw=document.getElementById("nav-work");
   if(nw)nw.toggleAttribute("aria-current",v==="work"||v==="object");
   closeAbout();
+if(v!=="object")updateSEO(null);
 }
 window.addEventListener("hashchange",route);
 route();
