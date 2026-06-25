@@ -540,7 +540,7 @@ function renderDetail(num){
   const prev=OBJECTS[(i-1+OBJECTS.length)%OBJECTS.length];
   const next=OBJECTS[(i+1)%OBJECTS.length];
   const shots=(o.images&&o.images.length?o.images.map((_,v)=>v):[0,1,2])
-    .map(v=>`<div class="shot">${mediaFor(o,v)}${(o.credits&&o.credits[v])?`<div class="photo-credit">${o.credits[v]}</div>":""}</div>`).join("");
+    .map(v=>`<div class="shot">${mediaFor(o,v)}${(o.credits&&o.credits[v])?`<div class="photo-credit">${o.credits[v]}</div>`:""}</div>`).join("");
   document.getElementById("detail").innerHTML=`
     <div class="detail-media">${shots}</div>
     <aside class="detail-info">
