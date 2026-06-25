@@ -162,6 +162,8 @@ body[data-view="home"] .wordmark{opacity:0;pointer-events:none}
 .detail-media{display:flex;flex-direction:column;gap:var(--gap)}
 .detail-media .shot{width:100%;aspect-ratio:3/4;overflow:hidden;background:var(--paper-deep)}
 .detail-media .shot svg,.detail-media .shot img{width:100%;height:100%;object-fit:cover}
+.detail-media{position:relative}
+.photo-credit{position:absolute;bottom:10px;left:10px;font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;color:rgba(255,255,255,.72);text-shadow:0 1px 3px rgba(0,0,0,.45);pointer-events:none;line-height:1}
 .detail-info{position:relative}
 .detail-info .stick{position:sticky;top:calc(var(--pad)*2.6)}
 .detail-info .num{font-family:var(--font-mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase}
@@ -540,7 +542,7 @@ function renderDetail(num){
   const shots=(o.images&&o.images.length?o.images.map((_,v)=>v):[0,1,2])
     .map(v=>`<div class="shot">${mediaFor(o,v)}</div>`).join("");
   document.getElementById("detail").innerHTML=`
-    <div class="detail-media">${shots}</div>
+    <div class="detail-media">${shots}${o.credit?`<div class="photo-credit">${o.credit}</div>`:""}</div>
     <aside class="detail-info">
       <div class="stick">
         <div class="num">Object ${o.num}</div>
